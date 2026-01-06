@@ -1,0 +1,14 @@
+# Ignore temporary swap files
+*.swp
+*.swo
+
+# Ignore Python cache (if you write python scripts inside config)
+__pycache__/
+
+# Ignore system files
+.DS_Store
+.netrwhist
+
+# Note: DO NOT ignore 'lazy-lock.json'. 
+# You WANT to commit that file. It remembers the exact versions of your plugins 
+# so your setup doesn't break on a new machine.
