@@ -86,7 +86,11 @@ vim.keymap.set("n", "<leader>r", function()
 
     -- Run Command: cd /path/to/folder && /path/to/venv/python main.py
     vim.cmd("vsplit | term cd " .. dir .. " && " .. python_cmd .. " " .. filename)
-    
+
+  elseif filetype == "java" then
+    -- Command: cd /path/to/folder && javac Main.java && java Main
+    vim.cmd("vsplit | term cd " .. dir .. " && javac " .. filename .. " && java " .. name_no_ext)
+
   else
     print("No run command for: " .. filetype)
   end
@@ -107,3 +111,18 @@ vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", {})
 vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", {})
 vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", {})
 vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", {})
+
+
+-- Point Neovim at this Virtual Environment for Molten-nvim
+vim.g.python3_host_prog=vim.fn.expand("~/.virtualenvs/neovim/bin/python3")
+-- Automatically launch the correct Kernel for Molten-nvim
+vim.keymap.set("n", "<localleader>ip", function()
+  local venv = os.getenv("VIRTUAL_ENV") or os.getenv("CONDA_PREFIX")
+  if venv ~= nil then
+    -- in the form of /home/benlubas/.virtualenvs/VENV_NAME
+    venv = string.match(venv, "/.+/(.+)")
+    vim.cmd(("MoltenInit %s"):format(venv))
+  else
+    vim.cmd("MoltenInit python3")
+  end
+end, { desc = "Initialize Molten for python3", silent = true })
