@@ -22,13 +22,25 @@ return {
           ["<S-Tab>"] = cmp.mapping.select_prev_item(),
         }),
         sources = cmp.config.sources({
+          { name = "copilot-chat"},
           { name = "nvim_lsp" },
           { name = "luasnip" },
         }, {
           { name = "buffer" },
         }),
       })
+
+        -- Add this AFTER your main cmp.setup() call
+        local cmp = require("cmp")
+
+        cmp.setup.filetype("copilot-chat", {
+          sources = {
+            { name = "copilot-chat" }, -- Only this source is needed in chat
+            -- { name = "path" },      -- Optional: if you want to autocomplete file paths
+          },
+        })
     end,
+    
   },
     {
       "L3MON4D3/LuaSnip",

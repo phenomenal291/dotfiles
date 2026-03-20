@@ -4,8 +4,8 @@ return {
   config = function()
     require("lualine").setup({
       options = {
-        theme = "catppuccin", -- Matches your theme
-        component_separators = '|',
+        theme = "material", -- Matches your theme
+        component_separators = '',
         section_separators = { left = '', right = '' },
       },
       sections = {
@@ -13,11 +13,11 @@ return {
           { 'mode', separator = { left = '' }, right_padding = 2 },
         },
         lualine_b = { 'filename', 'branch' },
-        lualine_c = { 'fileformat' },
+        lualine_c = {},
         lualine_x = {},
-        lualine_y = { 'filetype', 'progress' },
+        lualine_y = {},
         lualine_z = {
-          { 'location', separator = { right = '' }, left_padding = 2 },
+          { 'filetype', separator = { right = '' }, left_padding = 2 },
         },
       },
     })

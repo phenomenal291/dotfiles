@@ -30,8 +30,7 @@ return {
     editor_only_render_when_focused = false,
     tmux_show_only_in_active_window = false, 
     
-    -- This is the important part that lets you open image files directly
     hijack_file_patterns = { "*.png", "*.jpg", "*.jpeg", "*.gif", "*.webp", "*.avif" }, 
-  }, -- <--- opts closes HERE
+  }, 
 }
 

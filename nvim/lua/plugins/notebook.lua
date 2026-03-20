@@ -40,7 +40,7 @@ return {
         style = "percent", 
         output_extension = "py",
         force_ft = "python",
-        cmd = '/home/phuc/miniconda3/bin/jupytext', 
+        cmd = os.getenv("HOME") .. '/miniconda3/bin/jupytext', 
     },
   },
 }

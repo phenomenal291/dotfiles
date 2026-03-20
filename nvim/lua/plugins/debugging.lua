@@ -67,7 +67,7 @@ return {
               end,
             },
           }
-          require('mason-nvim-dap').default_setup(config)          require('mason-nvim-dap').default_setup(config)
+          require('mason-nvim-dap').default_setup(config)
         end,
       },
     })

@@ -26,6 +26,12 @@ vim.opt.linebreak = true
 -- vim.opt.breakindent = true
 -- vim.opt.showbreak = "↳\\"
 -- fk llm-ls
+
+-- enable fold 
+vim.opt.foldmethod = "expr"
+vim.opt.foldexpr = "v:lua.vim.treesitter.foldexpr()"
+vim.opt.foldlevel = 99
+
 local notify_original = vim.notify
 vim.notify = function(msg, ...)
     if
@@ -107,10 +113,10 @@ vim.keymap.set("n", "<C-j>", "<C-w>j", {}) -- Ctrl + Down
 vim.keymap.set("n", "<C-k>", "<C-w>k", {}) -- Ctrl + Up
 
 -- RESIZE WINDOWS (Arrow keys to resize)
-vim.keymap.set("n", "<C-Up>", ":resize +2<CR>", {})
-vim.keymap.set("n", "<C-Down>", ":resize -2<CR>", {})
-vim.keymap.set("n", "<C-Left>", ":vertical resize -2<CR>", {})
-vim.keymap.set("n", "<C-Right>", ":vertical resize +2<CR>", {})
+vim.keymap.set("n", "<C-Up>", ":resize +10<CR>", {})
+vim.keymap.set("n", "<C-Down>", ":resize -10<CR>", {})
+vim.keymap.set("n", "<C-Left>", ":vertical resize -10<CR>", {})
+vim.keymap.set("n", "<C-Right>", ":vertical resize +10<CR>", {})
 
 
 -- Point Neovim at this Virtual Environment for Molten-nvim
@@ -126,3 +132,34 @@ vim.keymap.set("n", "<localleader>ip", function()
     vim.cmd("MoltenInit python3")
   end
 end, { desc = "Initialize Molten for python3", silent = true })
+
+
+vim.api.nvim_create_autocmd("FileType", {
+  pattern = "copilotchat", -- Adjust if your plugin uses a different filetype
+  callback = function()
+    vim.api.nvim_buf_set_keymap(0, 'n', '<C-h>', '<C-w>h', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '<C-j>', '<C-w>j', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '<C-k>', '<C-w>k', { noremap = true, silent = true })
+    vim.api.nvim_buf_set_keymap(0, 'n', '<C-l>', '<C-w>l', { noremap = true, silent = true })
+  end,
+})
+
+ vim.api.nvim_create_autocmd("BufReadPost", {
+   pattern = "*.pdf",
+   callback = function()
+     local file_path = vim.api.nvim_buf_get_name(0)
+     require("pdfview").open(file_path)
+   end,
+ })
+
+-- Automatically open PDF files in Zathura instead of Neovim
+vim.api.nvim_create_autocmd("BufReadCmd", {
+    pattern = "*.pdf",
+    callback = function(opts)
+        -- 1. Close the gibberish buffer Neovim just tried to create
+        vim.api.nvim_buf_delete(opts.buf, { force = true })
+        
+        -- 2. Launch Zathura silently in the background (detached from Neovim)
+        vim.fn.jobstart({ "zathura", opts.file }, { detach = true })
+    end,
+})
