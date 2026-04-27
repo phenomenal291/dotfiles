@@ -24,6 +24,15 @@ return {
                 capabilities = capabilities,
               })
             end,
+            ["clangd"] = function()
+              lspconfig.clangd.setup({
+                capabilities = capabilities,
+                cmd = {
+                  "clangd",
+                  "--offset-encoding=utf-16",
+                },
+              })
+            end,
           })
 
           vim.keymap.set("n", "K", vim.lsp.buf.hover, {})

@@ -5,7 +5,7 @@ vim.cmd("set softtabstop=4")
 vim.cmd("set shiftwidth=4")
 vim.g.mapleader = " "
 vim.cmd("set number")
--- vim.cmd("set relativenumber")
+vim.cmd("set relativenumber")
 vim.cmd("set cursorline")
 vim.api.nvim_set_hl(0, "LineNrAbove", { fg = "white" })
 vim.api.nvim_set_hl(0, "LineNrBelow", { fg = "#ead84e" })
@@ -60,7 +60,9 @@ vim.opt.termguicolors = true -- Enable 24-bit RGB color
 
 -- ROBUST RUN: Works from any directory
 vim.keymap.set("n", "<leader>r", function()
-  vim.cmd("w") -- Save
+  if vim.api.nvim_buf_get_name(0) ~= "" then
+    vim.cmd("w!") -- Force save
+  end
 
   local filetype = vim.bo.filetype
   
@@ -77,7 +79,11 @@ vim.keymap.set("n", "<leader>r", function()
   if filetype == "cpp" then
     -- Command: cd /path/to/folder && g++ main.cpp -o main && ./main
     -- This ensures input/output files work correctly.
-    vim.cmd("vsplit | term cd " .. dir .. " && g++ -g " .. filename .. " -o " .. name_no_ext .. " && ./" .. name_no_ext)
+    vim.cmd("vsplit | term cd " .. vim.fn.shellescape(dir) .. " && g++ -g " .. vim.fn.shellescape(filename) .. " -o " .. vim.fn.shellescape(name_no_ext) .. " && ./" .. vim.fn.shellescape(name_no_ext))
+
+  elseif filetype == "c" then
+    -- Command: cd /path/to/folder && gcc main.c -o main && ./main
+    vim.cmd("vsplit | term cd " .. vim.fn.shellescape(dir) .. " && gcc -g " .. vim.fn.shellescape(filename) .. " -o " .. vim.fn.shellescape(name_no_ext) .. " && ./" .. vim.fn.shellescape(name_no_ext))
 
   elseif filetype == "python" then
     -- VENV LOGIC: Find venv in the PROJECT ROOT (where you opened nvim)
@@ -91,16 +97,21 @@ vim.keymap.set("n", "<leader>r", function()
     end
 
     -- Run Command: cd /path/to/folder && /path/to/venv/python main.py
-    vim.cmd("vsplit | term cd " .. dir .. " && " .. python_cmd .. " " .. filename)
+    vim.cmd("vsplit | term cd " .. vim.fn.shellescape(dir) .. " && " .. python_cmd .. " " .. vim.fn.shellescape(filename))
 
   elseif filetype == "java" then
     -- Command: cd /path/to/folder && javac Main.java && java Main
-    vim.cmd("vsplit | term cd " .. dir .. " && javac " .. filename .. " && java " .. name_no_ext)
+    vim.cmd("vsplit | term cd " .. vim.fn.shellescape(dir) .. " && javac " .. vim.fn.shellescape(filename) .. " && java " .. vim.fn.shellescape(name_no_ext))
 
   else
     print("No run command for: " .. filetype)
   end
 end, {})
+
+-- Alias <leader>R to <leader>r for Run
+vim.keymap.set("n", "<leader>R", function()
+    vim.api.nvim_feedkeys(vim.api.nvim_replace_termcodes("<leader>r", true, false, true), "m", true)
+end, { desc = "Run code (uppercase)" })
 
 -- SPLIT WINDOWS
 vim.keymap.set("n", "<leader>|", ":vsplit<CR>", { desc = "Split Vertical" }) -- Space + sv
@@ -117,6 +128,12 @@ vim.keymap.set("n", "<C-Up>", ":resize +10<CR>", {})
 vim.keymap.set("n", "<C-Down>", ":resize -10<CR>", {})
 vim.keymap.set("n", "<C-Left>", ":vertical resize -10<CR>", {})
 vim.keymap.set("n", "<C-Right>", ":vertical resize +10<CR>", {})
+
+-- Terminal mode navigation (Ctrl + h/j/k/l)
+vim.keymap.set('t', '<C-h>', [[<C-\><C-n><C-w>h]], { silent = true })
+vim.keymap.set('t', '<C-j>', [[<C-\><C-n><C-w>j]], { silent = true })
+vim.keymap.set('t', '<C-k>', [[<C-\><C-n><C-w>k]], { silent = true })
+vim.keymap.set('t', '<C-l>', [[<C-\><C-n><C-w>l]], { silent = true })
 
 
 -- Point Neovim at this Virtual Environment for Molten-nvim
